@@ -2,39 +2,203 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Média de Notas</title>
-</html>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-<body>
-  
-    <p>Media: <span id="resMedia"></span></p> <!--onde aparece o resultado da média-->
-    <p>Resultado: <span id="resSit"></span></p> <!--onde aparece situação de aprovado/reprovado-->
-    <script>
-        var notaUm = prompt('Primeira nota: '); //prompt para pegar a primeira rota;
-        var notaDois = prompt('Segunda nota: '); //prompt para pegar a segunda nota;
-
-        var media = (Number(notaUm) + Number(notaDois)) /2; //faz o calulodas das duas notas e pega a média;
-        var resMedia = document.querySelector('#resMedia'); //declara variável do resultado da média;
-        var resSit = document.querySelector('#resSit'); //declarar variávelda situação aprovado/reprovado;
-
-        //SE a média for acima de 6;
-        if(media >= 6){
-            resMedia.innerHTML = media;
-            resSit.style.color = 'blue'; //alterar a cor para azul
-            resSit.innerHTML = 'Aprovado!';
-    }
-   
-        //SE a média for abaixo de 6;
-        else{
-            resMedia.innerHTML = media;
-            resSit.style.color = 'red'; //altera a cor para vermelho;
-            resSit.innerHTML = 'Reprovado!';
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
 
-    </script>
-</body>
-</body>
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 2rem;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
 
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .icon {
+            font-size: 36px;
+            margin-bottom: 0.5rem;
+        }
+
+        h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .notes-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .form-group {
+            flex: 1;
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: #555;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 10px 14px;
+            font-size: 15px;
+            background: #f7f7f7;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            color: #1a1a1a;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input[type="number"]:focus {
+            border-color: #999;
+            background: #fff;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            background: #1a1a1a;
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+        }
+
+        .btn:hover { opacity: 0.85; }
+        .btn:active { transform: scale(0.98); }
+
+        .result-box {
+            margin-top: 1.5rem;
+            border-radius: 10px;
+            padding: 1.25rem;
+            text-align: center;
+            display: none;
+        }
+
+        .result-box.aprovado {
+            background: #EAF3DE;
+            border: 1px solid #97C459;
+        }
+
+        .result-box.reprovado {
+            background: #FCEBEB;
+            border: 1px solid #F09595;
+        }
+
+        .result-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .aprovado .result-label { color: #3B6D11; }
+        .reprovado .result-label { color: #A32D2D; }
+
+        .result-media {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin: 6px 0 4px;
+        }
+
+        .aprovado .result-media { color: #27500A; }
+        .reprovado .result-media { color: #791F1F; }
+
+        .result-status {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .aprovado .result-status { color: #3B6D11; }
+        .reprovado .result-status { color: #A32D2D; }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="header">
+            <div class="icon">📝</div>
+            <h2>Calculadora de Média</h2>
+            <p class="subtitle">Insira suas duas notas para calcular</p>
+        </div>
+
+        <div class="notes-row">
+            <div class="form-group">
+                <label for="nota1">Primeira nota</label>
+                <input type="number" id="nota1" placeholder="0 – 10" min="0" max="10" step="0.1" />
+            </div>
+            <div class="form-group">
+                <label for="nota2">Segunda nota</label>
+                <input type="number" id="nota2" placeholder="0 – 10" min="0" max="10" step="0.1" />
+            </div>
+        </div>
+
+        <button class="btn" onclick="calcular()">Calcular média</button>
+
+        <div class="result-box" id="resultBox">
+            <p class="result-label" id="resultLabel"></p>
+            <p class="result-media" id="resultMedia"></p>
+            <p class="result-status" id="resultStatus"></p>
+        </div>
+    </div>
+
+    <script>
+        function calcular() {
+            var n1 = parseFloat(document.getElementById('nota1').value);
+            var n2 = parseFloat(document.getElementById('nota2').value);
+            var box = document.getElementById('resultBox');
+
+            if (isNaN(n1) || isNaN(n2)) {
+                box.className = 'result-box reprovado';
+                box.style.display = 'block';
+                document.getElementById('resultLabel').textContent = 'Atenção';
+                document.getElementById('resultMedia').textContent = '—';
+                document.getElementById('resultStatus').textContent = 'Preencha as duas notas.';
+                return;
+            }
+
+            var media = (n1 + n2) / 2;
+            var aprovado = media >= 6;
+
+            box.className = 'result-box ' + (aprovado ? 'aprovado' : 'reprovado');
+            box.style.display = 'block';
+            document.getElementById('resultLabel').textContent = 'Média final';
+            document.getElementById('resultMedia').textContent = media.toFixed(1);
+            document.getElementById('resultStatus').textContent = aprovado ? 'Aprovado!' : 'Reprovado';
+        }
+    </script>
+
+</body>
 </html>
